@@ -1,0 +1,8 @@
+Contract deployed at address EQD0MM9at1gFH6zt9joku8akGzVECNku_R3sjq9oS9AGo2un
+You can view it at https://testnet.tonscan.org/address/EQD0MM9at1gFH6zt9joku8akGzVECNku_R3sjq9oS9AGo2un
+
+Contract deployed at address EQD0MM9at1gFH6zt9joku8akGzVECNku_R3sjq9oS9AGo2un
+You can view it at https://testnet.tonscan.org/address/EQD0MM9at1gFH6zt9joku8akGzVECNku_R3sjq9oS9AGo2un
+
+
+Deal ID BIG INT: 63678032527049305147114596331079473254
