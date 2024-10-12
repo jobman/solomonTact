@@ -11,7 +11,7 @@ function uuidToBigInt(uuid: string): bigint {
 export async function run(provider: NetworkProvider) {
     const solomonDeal = provider.open(await SolomonDeal.fromInit());
 
-    let deal_id = BigInt('63678032527049305147114596331079473254')
+    let deal_id = BigInt('230313423462225198301034280778135084527')
     console.log(`Deal ID BIG INT: ${deal_id}`);
 
     await solomonDeal.send(

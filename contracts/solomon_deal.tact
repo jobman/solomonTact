@@ -26,6 +26,10 @@ message ProducerGiveUpDeal {
     id: Int as uint128;
 }
 
+message ConsumerReturnMoneyDueToNotLockedResponsibility {
+    id: Int as uint128;
+}
+
 message CompleteTheDeal {
     id: Int as uint128;
 }
@@ -62,7 +66,7 @@ struct Deal {
 
 contract SolomonDeal with Deployable {
 
-    const version: String = "0.1.1 alpha";
+    const version: String = "0.2 alpha";
 
     judgeSystem: Address;
     minimalDealAmount: Int as coins = ton("0.1");
@@ -165,7 +169,7 @@ contract SolomonDeal with Deployable {
             mode: SendRemainingBalance + SendIgnoreErrors
         });
     }
-
+    
     receive(msg: ProducerGiveUpDeal) {
         let deal : Deal = (self.currentDeals.get(msg.id))!!;
         require(sender() == deal.producer, "Only producer can give up deal");
@@ -188,6 +192,27 @@ contract SolomonDeal with Deployable {
                 mode: SendIgnoreErrors
             });
         }
+        send(SendParameters{
+            to: sender(),
+            bounce: true,
+            value: 0,
+            mode: SendIgnoreErrors + SendRemainingValue
+        });
+    }
+
+    receive(msg: ConsumerReturnMoneyDueToNotLockedResponsibility) {
+        let deal : Deal = (self.currentDeals.get(msg.id))!!;
+        require(sender() == deal.consumer, "Only consumer can return money due to not locked responsibility");
+        require(deal.producerPayed == false, "Producer already payed");
+        self.currentDeals.set(msg.id, null);
+        self.totalClientMoney -= deal.amount;
+        send(SendParameters{
+            to: sender(),
+            bounce: true,
+            value: deal.amount,
+            mode: SendIgnoreErrors
+        });
+
         send(SendParameters{
             to: sender(),
             bounce: true,
