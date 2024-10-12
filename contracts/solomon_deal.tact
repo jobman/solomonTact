@@ -203,7 +203,7 @@ contract SolomonDeal with Deployable {
     receive(msg: ConsumerReturnMoneyDueToNotLockedResponsibility) {
         let deal : Deal = (self.currentDeals.get(msg.id))!!;
         require(sender() == deal.consumer, "Only consumer can return money due to not locked responsibility");
-        require(deal.producerPayed == false, "Producer already payed");
+        require(deal.producerPayed == false && deal.producerResponsibility > 0, "Producer already payed");
         self.currentDeals.set(msg.id, null);
         self.totalClientMoney -= deal.amount;
         send(SendParameters{
