@@ -66,7 +66,7 @@ struct Deal {
 
 contract SolomonDeal with Deployable {
 
-    const version: String = "0.2 alpha";
+    const version: String = "0.3 alpha";
 
     judgeSystem: Address;
     minimalDealAmount: Int as coins = ton("0.1");
@@ -279,6 +279,7 @@ contract SolomonDeal with Deployable {
         require(deal.expirationTime + self.systemFailureFreezeTime < now(), "Deal is not expired yet or freeze time is not passed");
         self.currentDeals.set(msg.id, null);
         if (deal.producerPayed == true) {
+            self.totalClientMoney -= deal.producerResponsibility;
             send(SendParameters{
                 to: deal.producer,
                 bounce: true,
@@ -294,13 +295,12 @@ contract SolomonDeal with Deployable {
             });
         }
         self.totalClientMoney -= deal.amount;
-        self.totalClientMoney -= deal.producerResponsibility;
     }
 
     receive("withdraw safe") {
         require(sender() == self.judgeSystem, "Only judge system can withdraw");
         let amountToWithdraw: Int = myBalance() - self.totalClientMoney - self.minimalContractBalance;
-        emit(EmitEvent{value: amountToWithdraw}.toCell());
+        //emit(EmitEvent{value: amountToWithdraw}.toCell());
         require(amountToWithdraw > self.minimalContractBalance, "Not enough money to withdraw");
         send(SendParameters{
             to: self.judgeSystem,
@@ -309,12 +309,12 @@ contract SolomonDeal with Deployable {
             mode: SendIgnoreErrors
         });
 
-        send(SendParameters{
-            to: sender(),
-            bounce: true,
-            value: 0,
-            mode: SendIgnoreErrors + SendRemainingValue
-        });
+        // send(SendParameters{
+        //     to: sender(),
+        //     bounce: true,
+        //     value: 0,
+        //     mode: SendIgnoreErrors + SendRemainingValue
+        // });
     }
 
     receive(msg: ChangeMinimalDealAmount) {
